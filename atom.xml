@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>EASYCREW</title>
+  <subtitle>一只飞翔的猪</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2017-09-01T10:14:43.730Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>EASYCREW</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ajay-async 异步请求abort方法</title>
+    <link href="http://yoursite.com/2017/09/01/ajay-async-%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82abort%E6%96%B9%E6%B3%95/"/>
+    <id>http://yoursite.com/2017/09/01/ajay-async-异步请求abort方法/</id>
+    <published>2017-09-01T09:04:58.000Z</published>
+    <updated>2017-09-01T10:14:43.730Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><p>使用ajax调取接口实现前后端分离获取后台数据的时候，由于请求数据量大，会造成返回等待时间比较长，这时候就希望选用异步请求，不影响页面UI操作,但是也会出现一种问题：<br>同一个异步请求<br>发送了第一次的请求后，数据很久没有返回。<br>这时发送了第二次，并获得了响应。<br>页面被更改。<br>但不久后，第一次请求的数据返回又将页面再次更改。<br>这样肯定是不合理的。</p>
+<h1 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h1><p>调用XMLHttpRequest对象上的abort方法，</p>
+<ol>
+<li>$.ajax返回的<strong>数据类型是XMLHttpRequest</strong>，</li>
+<li>XMLHttpRequest对象有abort()方法</li>
+<li>第二个请求发出并返回数据后，立即abort掉第一个请求。(禁止掉了第一个请求)</li>
+<li>设置一个flag，标识请求是否在进行中，还没有返回值，初始为false（正在请求中还没有返回值），在请求发出前判断该flag，如果为true，则忽略该次请求；如果为false，则abort掉前面正在运行的ajax请求，发送当前这次请求立并立即设置该flag为true，待该请求完成后(无论成功与否)，设置flag为false。<h2 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h2></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">// 用来标识某个异步函数以及成功回调</div><div class="line">// false 为那个异步函数请求中还没有返回数据</div><div class="line">// true 为那个异步函数已经返回数据</div><div class="line">var flag = false;</div><div class="line">var ajaxObj;</div><div class="line"></div><div class="line">var success = function() &#123;</div><div class="line">    // 首先判断一下 flag 是否被前面的异步函数修改了</div><div class="line">    // 没有的话就执行 if 语句里面的代码</div><div class="line">    if (!flag) &#123;</div><div class="line">       // 执行你的代码</div><div class="line">       // 最后再把标识改一下</div><div class="line">       flag = true;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line">ajaxObj = $.ajax(&#123;</div><div class="line">  async:true,</div><div class="line">  success:function(data)&#123;</div><div class="line">    //判断flag当前值，ajaxObj对象存在</div><div class="line">    if (!flag &amp;&amp; ajaxObj) &#123;</div><div class="line">       // 禁止上一个ajax</div><div class="line">       // 最后再把标识改一下</div><div class="line">       // 处理获得data</div><div class="line">       ajaxObj.abort();</div><div class="line">       flag = true;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;)</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;应用场景&quot;&gt;&lt;a href=&quot;#应用场景&quot; class=&quot;headerlink&quot; title=&quot;应用场景&quot;&gt;&lt;/a&gt;应用场景&lt;/h1&gt;&lt;p&gt;使用ajax调取接口实现前后端分离获取后台数据的时候，由于请求数据量大，会造成返回等待时间比较长，这时候就希望选用异步请求，
+    
+    </summary>
+    
+    
+      <category term="ajax js" scheme="http://yoursite.com/tags/ajax-js/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>css单行、多行超出文本显示省略号</title>
+    <link href="http://yoursite.com/2017/07/11/text-ellipsis/"/>
+    <id>http://yoursite.com/2017/07/11/text-ellipsis/</id>
+    <published>2017-07-11T06:50:00.000Z</published>
+    <updated>2017-07-11T06:56:48.378Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="单行超出显示省略号"><a href="#单行超出显示省略号" class="headerlink" title="单行超出显示省略号"></a>单行超出显示省略号</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">width: 200px;</div><div class="line">overflow: hidden;</div><div class="line">text-overflow:ellipsis;</div><div class="line">white-space: nowrap;</div></pre></td></tr></table></figure>
+<h2 id="多行超出显示省略号"><a href="#多行超出显示省略号" class="headerlink" title="多行超出显示省略号"></a>多行超出显示省略号</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">display: -webkit-box;</div><div class="line">-webkit-box-orient: vertical;</div><div class="line">-webkit-line-clamp: 3;</div><div class="line">overflow: hidden;</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;单行超出显示省略号&quot;&gt;&lt;a href=&quot;#单行超出显示省略号&quot; class=&quot;headerlink&quot; title=&quot;单行超出显示省略号&quot;&gt;&lt;/a&gt;单行超出显示省略号&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;t
+    
+    </summary>
+    
+    
+      <category term="css" scheme="http://yoursite.com/tags/css/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>搭建Vue开发环境</title>
+    <link href="http://yoursite.com/2017/07/06/vue-environment/"/>
+    <id>http://yoursite.com/2017/07/06/vue-environment/</id>
+    <published>2017-07-05T16:00:00.000Z</published>
+    <updated>2017-09-01T10:20:59.651Z</updated>
+    
+    <content type="html"><![CDATA[<p>vue前端框架，越来越多的公司都开始用于公司项目中。近年来的前端开发已经不像以前，直接引用jQuery，便可以开始编写前端页面。现在的不论是angular、react还是vue都需要有开发环境的支撑。在这里把搭建vue开发环境的一些步骤和理解记录下来，以便于整理思路，有更透彻的理解。写的这些东西仅限于吧自己的理解写出来，不一定规范，也有可能和权威的解释偏差很远，也只是为了更加容易接受。</p>
+<p>#前言<br>vue.js是一种前端框架，和jQuery属于平级，jQuery逐渐被淘汰，转而代替的是vue、react、anhular这些前端框架。创建vue项目，通常会配合webpack构建工具，他们在执行的时候都会依赖node.js环境，所以，要进行vue项目的开发，node.js是先前必须条件。</p>
+<h1 id="需要的工具"><a href="#需要的工具" class="headerlink" title="需要的工具"></a>需要的工具</h1><ol>
+<li><a href="http://nodejs.cn" target="_blank" rel="external">node.js</a></li>
+<li>vue-cli脚手架</li>
+<li>npm ——&gt;cnpm</li>
+</ol>
+<h1 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h1><h2 id="安装node"><a href="#安装node" class="headerlink" title="安装node"></a>安装node</h2><p>从node官网下载node安装包，下载完后，就像安装QQ一样，一路next便可安装成功。<br>安装完后验证有没有安装成功。如果能得到node的版本，就说明安装成功了</p>
+<ol>
+<li>首先要输入命令行需要<code>windows+R</code>然后输入<code>cmd</code>打开<code>命令提示符窗口</code>,在命令提示符窗口输入命令行，然后回车执行命令。<br><code>node -v</code></li>
+</ol>
+<h2 id="配置npm镜像源"><a href="#配置npm镜像源" class="headerlink" title="配置npm镜像源"></a>配置npm镜像源</h2><p>node中已经带有npm包管理工具，之后的安装依赖都是通过npm安装的。因为npm包基本都在国外，安装起来会很慢火车出现安装失败的情况，所以一般需要替换为国内的镜像源。<br><code>npm install -g cnpm --registry=https://registry.npm.taobao.org</code></p>
+<p><strong>补充:</strong> npm 包管理器下载安装包要从国外下载，会出现下载慢和下载不成功的情况，一般都是更改为国内的镜像源，国内比较优秀的镜像源有<code>淘宝镜像</code>，绝大部分情况也是推荐使用淘宝镜像。但是个别情况，比如说公司网络限制，一般不会让访问关于淘宝的任何网站，自然淘宝镜像也会访问失败。这个时候级必须要改用其他的国内镜像比如：<code>cnpmjs镜像</code></p>
+<h2 id="安装vue-cli脚手架"><a href="#安装vue-cli脚手架" class="headerlink" title="安装vue-cli脚手架"></a>安装vue-cli脚手架</h2><p>上面的操作已经把前期需要用到的都解决了，接下来就是涉及到vue方面了。首先要安装vue的脚手架，作用就是利用脚手架工具帮助搭建好所需的模板框架，就像盖房子前要先搭起整个房子的框架一样，比较让人开心的是脚手架工具就能自动帮我们搭建好模板框架，多省事。<br>需要输入的命令为：<br><code>npm install -g vue-cli</code><br><code>-g</code>代表全局安装，这样在电脑中的任何文件夹下都能执行vue-cli脚手架的相关命令<br>安装完后，可以输入<code>vue</code>,验证有没有安装成功，如果有vue的信息，就说明安装成功</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><ol>
+<li>进入F盘，新建文件夹my-vue作为项目文件夹.我是把项目放在F盘，这个可以根据自己实际情况放到任意一个盘中。<br>这里有两种方式：<br>（1）命令提示符窗口，也就是那个黑黑的窗口根据文件路径，进入到my-vue文件目录下<br>（2）如果电脑中安装的git,双击进入my-vue文件夹下，右键选择<code>git hash here</code>如果用git来操作，命令行颜色样式更加多一些，看起来好看也方面。<br>需要输入的命令为：<br><code>vue init webpack my-vue</code><br>其中“my-vue”是项目文件名称，这个文件就是以后的vue项目的文件夹。然后可以根据英文提示进行项目的配置，也可以回车选择默认值。</li>
+<li>然后<code>cd my-vue</code>进入到文件夹中，这个操作相当于鼠标双击文件夹打开文件夹的操作，现在只是通过命令行的形式进入到文件夹中。</li>
+<li>因为各个模板间都是相互依赖的，所以要安装依赖，安装时npm会根据package.json文件夹中的配置项一次安装里面涉及到的依赖<br>需要输入的命令行为：<br><code>cnpm install</code><br>时间会比较长，npm会下载安装很多的依赖，完成后，项目结构里会多出一个node_modules文件夹，安装的依赖都会放在这个文件夹中。</li>
+<li>最后测试项目中默认的app.vue模块能不能跑起来，需要安装服务器环境<br>对应命令行为：<br><code>npm run dev</code><br>完成后会有提示 <a href="http://localhost:8080" target="_blank" rel="external">http://localhost:8080</a> 说明现在8080端口已经开通，在浏览器中输入locahost:8080发现页面正常打开，那么恭喜，到这里整个环境就搭建完成了。</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;vue前端框架，越来越多的公司都开始用于公司项目中。近年来的前端开发已经不像以前，直接引用jQuery，便可以开始编写前端页面。现在的不论是angular、react还是vue都需要有开发环境的支撑。在这里把搭建vue开发环境的一些步骤和理解记录下来，以便于整理思路，有更透
+    
+    </summary>
+    
+    
+      <category term="vue" scheme="http://yoursite.com/tags/vue/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>配置hexo+github个人博客--开启新技能</title>
+    <link href="http://yoursite.com/2017/07/05/first-blog/"/>
+    <id>http://yoursite.com/2017/07/05/first-blog/</id>
+    <published>2017-07-05T09:21:21.000Z</published>
+    <updated>2017-07-11T05:34:10.902Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="hexo主题推荐"><a href="#hexo主题推荐" class="headerlink" title="hexo主题推荐"></a>hexo主题推荐</h1><p><a href="http://www.jianshu.com/p/b6c694c2e58e" target="_blank" rel="external">http://www.jianshu.com/p/b6c694c2e58e</a></p>
+<h1 id="hexo主题next的主题配置"><a href="#hexo主题next的主题配置" class="headerlink" title="hexo主题next的主题配置"></a>hexo主题next的主题配置</h1><p><a href="https://segmentfault.com/a/1190000009544924" target="_blank" rel="external">https://segmentfault.com/a/1190000009544924</a></p>
+<h2 id="next官网"><a href="#next官网" class="headerlink" title="next官网"></a><a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next官网</a></h2>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;hexo主题推荐&quot;&gt;&lt;a href=&quot;#hexo主题推荐&quot; class=&quot;headerlink&quot; title=&quot;hexo主题推荐&quot;&gt;&lt;/a&gt;hexo主题推荐&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;http://www.jianshu.com/p/b6c694c2e58e
+    
+    </summary>
+    
+    
+      <category term="hexo" scheme="http://yoursite.com/tags/hexo/"/>
+    
+      <category term="GitHub" scheme="http://yoursite.com/tags/GitHub/"/>
+    
+  </entry>
+  
+</feed>
